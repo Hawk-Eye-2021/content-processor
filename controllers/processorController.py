@@ -1,6 +1,6 @@
 
 from flask_restful import Resource
-from flask import request
+from flask import request, jsonify
 
 from entityExtractor import extract_entities
 
@@ -8,10 +8,10 @@ from entityExtractor import extract_entities
 class ProcessorController(Resource):
 
     def post(self):
-        parts = request.json
+        content = request.get_json(force=True, silent=True, cache=False)['content']
+
         entities = set()
-        for part in parts:
-            part_entities = extract_entities(part)
-            for part_entity in part_entities:
-                entities.add(part_entity)
+        part_entities = extract_entities(content)
+        for part_entity in part_entities:
+            entities.add(part_entity)
         return list(entities)
